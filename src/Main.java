@@ -1,5 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
     private final JFrame frame;
@@ -7,6 +12,7 @@ public class Main {
     private final DefaultListModel<String> listModel;
     private final JTextField taskField;
     private final JButton addButton, removeButton;
+    private static final String TASK_FILE_NAME = System.getProperty("user.home") + "/todo_app_tasks.txt";
 
     public Main(){
         Font FONT_LARGE = new Font("Arial", Font.PLAIN, 18);
@@ -41,6 +47,29 @@ public class Main {
         frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
         frame.getContentPane().add(inputPanel, BorderLayout.SOUTH);
         frame.setLocationRelativeTo(null);
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                saveTasks();
+            }
+        });
+    }
+    private void saveTasks(){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(TASK_FILE_NAME))){
+            for (int i = 0; i < listModel.getSize(); i++){
+                String task = listModel.getElementAt(i);
+                writer.write(task);
+                writer.newLine();
+            }
+        } catch (IOException e){
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "Error: Could not save tasks to file.\n" + e.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
     private void removeTask(){
         int idx =  taskList.getSelectedIndex();
@@ -50,14 +79,12 @@ public class Main {
         if (idx < listModel.getSize()) taskList.setSelectedIndex(idx); // Select the next item
         else if (!listModel.isEmpty()) taskList.setSelectedIndex(idx-1); // Select the new last item
     }
-
     private void addTask(){
         if (!taskField.getText().isEmpty()){
             listModel.addElement(taskField.getText());
             taskField.setText("");
         }
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() ->{
             Main app = new Main();
