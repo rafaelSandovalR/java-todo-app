@@ -71,7 +71,6 @@ public class Main {
             );
         }
     }
-
     private void saveTasks(){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(TASK_FILE_NAME))){
             for (int i = 0; i < listModel.getSize(); i++){
@@ -89,12 +88,20 @@ public class Main {
         }
     }
     private void removeTask(){
-        int idx =  taskList.getSelectedIndex();
-        if (idx < 0) return;
+        int[] indices =  taskList.getSelectedIndices();
+        if (indices.length == 0) return;
 
-        listModel.removeElementAt(idx);
-        if (idx < listModel.getSize()) taskList.setSelectedIndex(idx); // Select the next item
-        else if (!listModel.isEmpty()) taskList.setSelectedIndex(idx-1); // Select the new last item
+        // Remove items from the highest index to the lowest
+        for (int i = indices.length-1; i >= 0 ; i--){
+            listModel.removeElementAt(indices[i]);
+        }
+        // Index for new selection
+        int firstRemovedIdx = indices[0];
+
+        if (listModel.isEmpty()) return;
+
+        if (firstRemovedIdx < listModel.getSize()) taskList.setSelectedIndex(firstRemovedIdx); // Select item that is now at original starting position
+        else taskList.setSelectedIndex(listModel.size()-1); // If we deleted from the end, select the new last item
     }
     private void addTask(){
         if (!taskField.getText().isEmpty()){
