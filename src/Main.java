@@ -76,19 +76,15 @@ public class Main {
 
         String currentTask = taskList.getSelectedValue();
         // Create popup to allow user edits
-        String newTask = (String) JOptionPane.showInputDialog(
+        String newTask = JOptionPane.showInputDialog(
                 frame,
                 "Edit your task:",
-                "Edit task",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
                 currentTask
         );
 
         // If user made a non-empty change, save to model
         if (newTask != null && !newTask.trim().isEmpty()){
-            listModel.setElementAt(newTask, selectedIndex);
+            listModel.setElementAt(newTask.trim(), selectedIndex);
         }
     }
     private void loadTasks(){
@@ -141,8 +137,9 @@ public class Main {
         else taskList.setSelectedIndex(listModel.size()-1); // If we deleted from the end, select the new last item
     }
     private void addTask(){
-        if (!taskField.getText().isEmpty()){
-            listModel.addElement(taskField.getText());
+        String newTask = taskField.getText().trim();
+        if (!newTask.isEmpty()){
+            listModel.addElement(newTask);
             taskField.setText("");
         }
     }
