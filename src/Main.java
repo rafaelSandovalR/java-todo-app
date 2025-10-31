@@ -2,9 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class Main {
     private final JFrame frame;
@@ -46,6 +44,7 @@ public class Main {
         frame.setLayout(new BorderLayout());
         frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
         frame.getContentPane().add(inputPanel, BorderLayout.SOUTH);
+        loadTasks(); // Load any saved tasks before window is made visible
         frame.setLocationRelativeTo(null);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -55,6 +54,24 @@ public class Main {
             }
         });
     }
+    private void loadTasks(){
+        try(BufferedReader reader = new BufferedReader(new FileReader(TASK_FILE_NAME))){
+            String line;
+            while ((line = reader.readLine()) != null){ // Ignore blank lines
+                if (!line.trim().isEmpty()) listModel.addElement(line);
+            }
+        } catch (FileNotFoundException e){
+            // First time the user is running the app
+        } catch (IOException e){
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "Error: Could not load tasks from file.\n" + e.getMessage(),
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
     private void saveTasks(){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(TASK_FILE_NAME))){
             for (int i = 0; i < listModel.getSize(); i++){
