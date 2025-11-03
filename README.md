@@ -20,8 +20,6 @@ The easiest way to run the app is to download the latest compiled version.
 2.  Download the `.zip` file for the latest release (e.g., `v1.0`).
 3.  Unzip the folder and follow the instructions in the `README.TXT` file (or just double-click `start.vbs`).
 
-*(Remember to replace `YourUsername` with your actual GitHub username!)*
-
 ## How to Build from Source
 
 1.  Clone this repository.
